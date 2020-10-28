@@ -1,27 +1,33 @@
 package com.Account.assignment;
 
-import io.vertx.codegen.annotations.ProxyGen;
-import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonObject;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
 public class AccountServiceImpl implements AccountService {
+  private Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
-  private JsonObject lastAccountInfo;
+  Vertx vertx;
 
   public AccountServiceImpl(Vertx vertx) {
-    vertx.eventBus().consumer("Account.generate", receive -> {
-      lastAccountInfo = (JsonObject) receive.body();
-      System.out.println(receive.body());
-    });
+    this.vertx = vertx;
   }
 
   @Override
-  public void accountInfo(Handler<AsyncResult<JsonObject>> handler) {
-    handler.handle(Future.succeededFuture(this.lastAccountInfo));
+  public void accountInfo(int id, Handler<AsyncResult<String>> handler) {
+    EventBus request = vertx.eventBus().send("Account.findById", id+"", reply -> {
+      if (reply.succeeded()) {
+        String s = reply.result().body().toString();
+        handler.handle(Future.succeededFuture(s));
+      }
+      else if (reply.failed()){
+        logger.info("Reply Failed");
+      }
+    });
   }
+
 }

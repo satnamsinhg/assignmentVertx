@@ -19,5 +19,5 @@ public interface AccountService {
     return new AccountServiceVertxEBProxy(vertx, address);
   }
 
-  void accountInfo(Handler<AsyncResult<JsonObject>> handler);
+  void accountInfo(int id, Handler<AsyncResult<String>> handler);
 }

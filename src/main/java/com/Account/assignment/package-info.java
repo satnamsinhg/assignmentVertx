@@ -1,4 +1,4 @@
-@ModuleGen(name = "AccountService", groupPackage = "com.Account")
+@ModuleGen(name = "assignment", groupPackage = "com.Account.assignment")
 package com.Account.assignment;
 
 import io.vertx.codegen.annotations.ModuleGen;
